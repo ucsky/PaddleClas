@@ -1,3 +1,4 @@
+.local.env
 __pycache__/
 *.pyc
 *.sw*
@@ -13,3 +14,5 @@ log/
 nohup.out
 .DS_Store
 .idea
+*~
+/venv/
