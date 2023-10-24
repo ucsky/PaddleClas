@@ -9,15 +9,66 @@ help:
 
 ###
 
-conda-install: ## Install conda env for CPU
-conda-install:
-	-(. ~/activate/miniconda3 \
-	&& conda env list | egrep "^PaddleClasCpu\s"  && true || conda create --name PaddleClasCpu python=3.10 -y \
-	&& conda activate PaddleClasCpu \
-	&& which python \
+
+.local.env:
+	-(touch .local.env)
+
+venv-build-cpu: ## Create Python environement with venv for CPU.
+venv-build-cpu: venv/cpu/bin/activate
+venv/cpu/bin/activate: .local.env
+	-( \
+	. .local.env \
+	&& test -d venv/cpu \
+	|| $(PYTHON) -m venv venv/cpu \
+	)
+	-( \
+	. .local.env \
+	&& . venv/cpu/bin/activate \
 	&& pip install -U pip \
 	&& pip install paddlepaddle --upgrade -i https://mirror.baidu.com/pypi/simple \
-	)	
+	)
+
+venv-test-cpu: ## Test venv CPU install.
+venv-test-cpu:  venv/cpu/bin/activate .local.env
+	-( \
+	. .local.env \
+	&& . venv/cpu/bin/activate \
+	&& python -c "import paddle; paddle.utils.run_check()" \
+	)
+
+
+venv-clean-cpu: ## Clean venv CPU env.
+venv-clean-cpu:
+	rm -rf venv/cpu
+
+
+venv-build-gpu: ## Create Python environement with venv for GPU.
+venv-build-gpu: venv/gpu/bin/activate
+venv/gpu/bin/activate: .local.env
+	-( \
+	. .local.env \
+	&& test -d venv/gpu \
+	|| $(PYTHON) -m venv venv/gpu \
+	)
+	-( \
+	. .local.env \
+	&& . venv/gpu/bin/activate \
+	&& pip install -U pip \
+	&& pip install paddlepaddle-gpu --upgrade -i https://mirror.baidu.com/pypi/simple \
+	)
+
+
+venv-test-gpu: ## Test venv GPU install.
+venv-test-gpu:  venv/gpu/bin/activate .local.env
+	-( \
+	. .local.env \
+	&& . venv/gpu/bin/activate \
+	&& python -c "import paddle; paddle.utils.run_check()" \
+	)
+
+venv-clean-gpu: ## Clean venv GPU env.
+venv-clean-gpu:
+	rm -rf venv/gpu
 
 
 docker-run-cpu-it: ## Run docker images for CPU users in interactive mode.  
