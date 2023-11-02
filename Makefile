@@ -146,5 +146,5 @@ docker-run-gpu-it:
 	--shm-size=8G \
 	--network=host \
 	--gpus all \
-	-it paddlepaddle/paddle:2.1.0-gpu-cuda10.2-cudnn7 /bin/bash 
+	-it paddlepaddle/paddle:2.5.2-gpu-cuda12.0-cudnn8.9-trt8.6 /bin/bash 
 
